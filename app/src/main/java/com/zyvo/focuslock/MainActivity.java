@@ -1,8 +1,6 @@
 package com.zyvo.focuslock;
 
 import android.app.Activity;
-import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -18,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-    private static final int REQ_DEVICE_ADMIN = 100;
     private TextView statusText;
     private TextView countdownText;
     private EditText durationInput;
@@ -38,11 +35,7 @@ public class MainActivity extends Activity {
 
         startBtn.setOnClickListener(v -> startTimer());
 
-        // Request battery optimization exemption
         requestBatteryOptimization();
-
-        // Request device admin
-        requestDeviceAdmin();
 
         refresh = new Runnable() {
             @Override public void run() {
@@ -61,18 +54,6 @@ public class MainActivity extends Activity {
                 i.setData(Uri.parse("package:" + getPackageName()));
                 try { startActivity(i); } catch (Exception e) { /* ignore */ }
             }
-        }
-    }
-
-    private void requestDeviceAdmin() {
-        DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-        ComponentName admin = new ComponentName(this, FocusDeviceAdminReceiver.class);
-        if (!dpm.isAdminActive(admin)) {
-            Intent i = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-            i.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, admin);
-            i.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                "FocusLock needs device admin to prevent uninstall during an active focus session.");
-            try { startActivityForResult(i, REQ_DEVICE_ADMIN); } catch (Exception e) { /* ignore */ }
         }
     }
 
