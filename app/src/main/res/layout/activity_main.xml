@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F6F7F9"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Set duration and start focus"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#1A1A1A"
+        android:gravity="center"
+        android:layout_marginTop="24dp" />
+
+    <TextView
+        android:id="@+id/countdownText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="--:--"
+        android:textSize="48sp"
+        android:textStyle="bold"
+        android:textColor="#4F46E5"
+        android:gravity="center"
+        android:layout_marginTop="32dp" />
+
+    <EditText
+        android:id="@+id/durationInput"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:hint="Duration in minutes (1-720)"
+        android:inputType="number"
+        android:gravity="center"
+        android:layout_marginTop="32dp"
+        android:background="@android:drawable/edit_text" />
+
+    <Button
+        android:id="@+id/startBtn"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Start Focus"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="#4F46E5"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Once started, the timer cannot be stopped until it completes. Blocked apps will be inaccessible."
+        android:textSize="13sp"
+        android:textColor="#8A8A8E"
+        android:gravity="center"
+        android:layout_marginTop="16dp" />
+</LinearLayout>
