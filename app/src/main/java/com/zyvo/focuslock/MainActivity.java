@@ -1,6 +1,7 @@
 package com.zyvo.focuslock;
 
 import android.app.Activity;
+import android.app.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -39,8 +40,13 @@ public class MainActivity extends Activity {
             startActivity(new Intent(this, AppPickerActivity.class)));
 
         statusText.setOnClickListener(v -> {
-            if (!accessibilityOn()) {
-                startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+            if (!usageAccessOn()) {
+                Toast.makeText(this, "Allow Usage access for FocusLock", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+            } else if (!Settings.canDrawOverlays(this)) {
+                Toast.makeText(this, "Allow display over other apps", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName())));
             }
         });
 
@@ -83,15 +89,18 @@ public class MainActivity extends Activity {
         updateUI();
     }
 
-    private boolean accessibilityOn() {
-        String s = Settings.Secure.getString(getContentResolver(),
-            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
-        return s != null && s.contains(getPackageName());
+    private boolean usageAccessOn() {
+        UsageStatsManager usm = (UsageStatsManager) getSystemService(USAGE_STATS_SERVICE);
+        if (usm == null) return false;
+        long t = System.currentTimeMillis();
+        return !usm.queryUsageStats(UsageStatsManager.INTERVAL_BEST, t - 300000, t).isEmpty();
     }
 
     private void updateUI() {
-        if (!accessibilityOn()) {
-            statusText.setText("Blocking OFF - tap to enable accessibility service");
+        if (!usageAccessOn()) {
+            statusText.setText("Blocking OFF - tap to allow Usage access");
+        } else if (!Settings.canDrawOverlays(this)) {
+            statusText.setText("Blocking low-reliability - tap to allow display over apps");
         } else if (Prefs.isActive(this)) {
             long rem = Prefs.getEndTime(this) - System.currentTimeMillis();
             if (rem <= 0) {

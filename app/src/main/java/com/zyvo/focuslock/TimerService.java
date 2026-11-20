@@ -11,6 +11,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.app.usage.UsageEvents;
+import android.app.usage.UsageStatsManager;
 import androidx.core.app.NotificationCompat;
 
 public class TimerService extends Service {
@@ -70,8 +72,9 @@ public class TimerService extends Service {
                     finishTimer();
                     return;
                 }
+                enforceBlock();
                 updateNotification(rem);
-                handler.postDelayed(this, 1000);
+                handler.postDelayed(this, 500);
             }
         };
         handler.postDelayed(tick, 1000);
@@ -84,6 +87,40 @@ public class TimerService extends Service {
     private void updateNotification(long rem) {
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         nm.notify(NOTIF_ID, buildNotification(rem));
+    }
+
+    /**
+     * Poll UsageStatsManager for the current foreground app and redirect if blocked.
+     * Needs PACKAGE_USAGE_STATS ("Usage access") granted by the user.
+     */
+    private void enforceBlock() {
+        String pkg = foregroundPkg();
+        if (pkg == null || pkg.equals(getPackageName())) return;
+        if (!Prefs.isBlocked(this, pkg)) return;
+        Intent i = new Intent(this, BlockedAppsActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP
+            | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        try {
+            startActivity(i);
+        } catch (Exception ex) {
+            // bg-activity-start denied (overlay permission missing); retry next tick
+        }
+    }
+
+    private String foregroundPkg() {
+        UsageStatsManager usm = (UsageStatsManager) getSystemService(USAGE_STATS_SERVICE);
+        if (usm == null) return null;
+        long now = System.currentTimeMillis();
+        UsageEvents ev = usm.queryEvents(now - 3000, now);
+        UsageEvents.Event e = new UsageEvents.Event();
+        String last = null;
+        while (ev.hasNextEvent()) {
+            ev.getNextEvent(e);
+            if (e.getEventType() == UsageEvents.Event.ACTIVITY_RESUMED) {
+                last = e.getPackageName();
+            }
+        }
+        return last;
     }
 
     private void finishTimer() {
