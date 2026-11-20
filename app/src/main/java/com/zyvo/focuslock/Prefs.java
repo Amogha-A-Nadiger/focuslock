@@ -54,4 +54,7 @@ public class Prefs {
     }
 
     public static boolean isBlocked(Context c, String pkg) { return getBlocked(c).contains(pkg); }
+
+    public static void setWatchdogTick(Context c) { sp(c).edit().putLong("wd_tick", System.currentTimeMillis()).apply(); }
+    public static long getWatchdogTick(Context c) { return sp(c).getLong("wd_tick", 0L); }
 }

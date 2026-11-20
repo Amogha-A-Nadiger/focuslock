@@ -16,6 +16,11 @@ public class AppPickerActivity extends Activity {
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
+        if (Prefs.isActive(this)) { // direct entry (recents) during a running timer
+            Toast.makeText(this, "Timer active - block list is locked", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_picker);
 
         PackageManager pm = getPackageManager();

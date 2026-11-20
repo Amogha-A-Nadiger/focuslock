@@ -94,6 +94,7 @@ public class TimerService extends Service {
      * Needs PACKAGE_USAGE_STATS ("Usage access") granted by the user.
      */
     private void enforceBlock() {
+        Prefs.setWatchdogTick(this);
         String pkg = foregroundPkg();
         if (pkg == null || pkg.equals(getPackageName())) return;
         if (!Prefs.isBlocked(this, pkg)) return;
@@ -111,16 +112,26 @@ public class TimerService extends Service {
         UsageStatsManager usm = (UsageStatsManager) getSystemService(USAGE_STATS_SERVICE);
         if (usm == null) return null;
         long now = System.currentTimeMillis();
-        UsageEvents ev = usm.queryEvents(now - 3000, now);
+        // Latest RESUMED event in a wide window; some OEMs report usage events sparsely.
+        UsageEvents ev = usm.queryEvents(now - 15000, now);
         UsageEvents.Event e = new UsageEvents.Event();
         String last = null;
+        long lastTs = -1;
         while (ev.hasNextEvent()) {
             ev.getNextEvent(e);
-            if (e.getEventType() == UsageEvents.Event.ACTIVITY_RESUMED) {
+            if (e.getEventType() == UsageEvents.Event.ACTIVITY_RESUMED && e.getTimeStamp() > lastTs) {
+                lastTs = e.getTimeStamp();
                 last = e.getPackageName();
             }
         }
-        return last;
+        if (last != null) return last;
+        // Fallback: most recently used app in the last 10 seconds.
+        java.util.List<UsageStats> stats =
+            usm.queryUsageStats(UsageStatsManager.INTERVAL_BEST, now - 10000, now);
+        if (stats == null || stats.isEmpty()) return null;
+        UsageStats best = stats.get(0);
+        for (UsageStats s : stats) if (s.getLastTimeUsed() > best.getLastTimeUsed()) best = s;
+        return best.getPackageName();
     }
 
     private void finishTimer() {

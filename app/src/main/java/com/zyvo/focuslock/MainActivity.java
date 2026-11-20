@@ -36,8 +36,13 @@ public class MainActivity extends Activity {
 
         startBtn.setOnClickListener(v -> startTimer());
 
-        findViewById(R.id.pickerBtn).setOnClickListener(v ->
-            startActivity(new Intent(this, AppPickerActivity.class)));
+        findViewById(R.id.pickerBtn).setOnClickListener(v -> {
+            if (Prefs.isActive(this)) {
+                Toast.makeText(this, "Timer active - block list is locked", Toast.LENGTH_LONG).show();
+                return;
+            }
+            startActivity(new Intent(this, AppPickerActivity.class));
+        });
 
         statusText.setOnClickListener(v -> {
             if (!restrictedSettingsDone()) {
@@ -135,7 +140,10 @@ public class MainActivity extends Activity {
             long sec = rem / 1000;
             long m = sec / 60;
             long s = sec % 60;
-            statusText.setText("Focus session active - cannot be stopped");
+            long wdAge = System.currentTimeMillis() - Prefs.getWatchdogTick(this);
+            statusText.setText(wdAge < 2000
+                ? "Focus session active - cannot be stopped"
+                : "Timer active - watchdog NOT running (report this)");
             countdownText.setText(String.format("%02d:%02d", m, s));
             startBtn.setEnabled(false);
             durationInput.setEnabled(false);
