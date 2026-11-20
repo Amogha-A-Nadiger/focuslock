@@ -1,7 +1,7 @@
 package com.zyvo.focuslock;
 
 import android.app.Activity;
-import android.app.UsageStatsManager;
+import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
