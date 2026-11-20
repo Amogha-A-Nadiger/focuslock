@@ -19,8 +19,12 @@ public class AppPickerActivity extends Activity {
         setContentView(R.layout.activity_picker);
 
         PackageManager pm = getPackageManager();
-        Intent main = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER);
-        List<ApplicationInfo> apps = pm.getInstalledApplications(0);
+        // Match all: user apps, bloatware, disabled and leftover-uninstalled entries.
+        // QUERY_ALL_PACKAGES (manifest) lifts the Android 11+ package-visibility filter.
+        List<ApplicationInfo> apps = pm.getInstalledApplications(
+            PackageManager.GET_META_DATA
+              | PackageManager.GET_UNINSTALLED_PACKAGES  // MATCH_UNINSTALLED_PACKAGES pre-API 30
+              | PackageManager.MATCH_DISABLED_COMPONENTS);
         List<String> labels = new ArrayList<>();
         List<String> packages = new ArrayList<>();
         for (ApplicationInfo ai : apps) {
