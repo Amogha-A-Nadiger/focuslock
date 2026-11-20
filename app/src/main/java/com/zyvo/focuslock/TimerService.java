@@ -41,6 +41,12 @@ public class TimerService extends Service {
             stopSelf();
             return START_NOT_STICKY;
         }
+        if (intent != null && ACTION_START.equals(intent.getAction()) && Prefs.isActive(this)) {
+            // Timer already running; only re-attach the foreground notification. Never reset the deadline.
+            startForeground(NOTIF_ID, buildNotification(remainingMs()));
+            scheduleTick();
+            return START_STICKY;
+        }
         int minutes = 25;
         if (intent != null) minutes = intent.getIntExtra(EXTRA_MINUTES, 25);
         if (minutes < 1) minutes = 1;

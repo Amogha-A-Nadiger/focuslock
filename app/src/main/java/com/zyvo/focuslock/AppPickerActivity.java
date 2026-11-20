@@ -28,12 +28,11 @@ public class AppPickerActivity extends Activity {
         List<String> labels = new ArrayList<>();
         List<String> packages = new ArrayList<>();
         for (ApplicationInfo ai : apps) {
+            if ((ai.flags & ApplicationInfo.FLAG_SYSTEM) != 0) continue; // system apps: nothing to block
             if (ai.packageName.equals(getPackageName())) continue; // skip ourselves
-            if (ai.packageName.startsWith("com.android.") || ai.packageName.equals("android")) continue; // core system shelf
             String label;
             try { label = pm.getApplicationLabel(ai).toString(); } catch (Exception e) { label = ai.packageName; }
             if (label == null || label.isEmpty()) label = ai.packageName; // hidden apps may have no label
-            if ((ai.flags & ApplicationInfo.FLAG_SYSTEM) != 0) label += "  (system)";
             labels.add(label);
             packages.add(ai.packageName);
         }

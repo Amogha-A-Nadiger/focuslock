@@ -38,6 +38,12 @@ public class MainActivity extends Activity {
         findViewById(R.id.pickerBtn).setOnClickListener(v ->
             startActivity(new Intent(this, AppPickerActivity.class)));
 
+        statusText.setOnClickListener(v -> {
+            if (!accessibilityOn()) {
+                startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+            }
+        });
+
         requestBatteryOptimization();
 
         refresh = new Runnable() {
@@ -77,8 +83,16 @@ public class MainActivity extends Activity {
         updateUI();
     }
 
+    private boolean accessibilityOn() {
+        String s = Settings.Secure.getString(getContentResolver(),
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+        return s != null && s.contains(getPackageName());
+    }
+
     private void updateUI() {
-        if (Prefs.isActive(this)) {
+        if (!accessibilityOn()) {
+            statusText.setText("Blocking OFF - tap to enable accessibility service");
+        } else if (Prefs.isActive(this)) {
             long rem = Prefs.getEndTime(this) - System.currentTimeMillis();
             if (rem <= 0) {
                 Prefs.setActive(this, false);
