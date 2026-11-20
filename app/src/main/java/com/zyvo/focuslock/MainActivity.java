@@ -40,7 +40,9 @@ public class MainActivity extends Activity {
             startActivity(new Intent(this, AppPickerActivity.class)));
 
         statusText.setOnClickListener(v -> {
-            if (!usageAccessOn()) {
+            if (!restrictedSettingsDone()) {
+                openAppInfoStep();
+            } else if (!usageAccessOn()) {
                 Toast.makeText(this, "Allow Usage access for FocusLock", Toast.LENGTH_LONG).show();
                 startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
             } else if (!Settings.canDrawOverlays(this)) {
@@ -89,6 +91,23 @@ public class MainActivity extends Activity {
         updateUI();
     }
 
+    // Android 13+ marks sideloaded apps as restricted; the "Allow restricted
+    // settings" flag in App info is undetectable, so gate on the user's pass.
+    private boolean restrictedSettingsDone() {
+        return getSharedPreferences("focuslock_prefs", MODE_PRIVATE)
+            .getBoolean("rs_step_done", false);
+    }
+
+    private void openAppInfoStep() {
+        getSharedPreferences("focuslock_prefs", MODE_PRIVATE).edit()
+            .putBoolean("rs_step_done", true).apply(); // never gate twice
+        Toast.makeText(this,
+            "Tap the 3-dot menu (top right) > Allow restricted settings, then come back",
+            Toast.LENGTH_LONG).show();
+        startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.parse("package:" + getPackageName())));
+    }
+
     private boolean usageAccessOn() {
         UsageStatsManager usm = (UsageStatsManager) getSystemService(USAGE_STATS_SERVICE);
         if (usm == null) return false;
@@ -97,10 +116,12 @@ public class MainActivity extends Activity {
     }
 
     private void updateUI() {
-        if (!usageAccessOn()) {
-            statusText.setText("Blocking OFF - tap to allow Usage access");
+        if (!restrictedSettingsDone()) {
+            statusText.setText("Setup 1/3 - tap: unlock restricted settings");
+        } else if (!usageAccessOn()) {
+            statusText.setText("Setup 2/3 - tap: allow Usage access");
         } else if (!Settings.canDrawOverlays(this)) {
-            statusText.setText("Blocking low-reliability - tap to allow display over apps");
+            statusText.setText("Setup 3/3 - tap: allow display over other apps");
         } else if (Prefs.isActive(this)) {
             long rem = Prefs.getEndTime(this) - System.currentTimeMillis();
             if (rem <= 0) {
