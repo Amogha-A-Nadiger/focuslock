@@ -11,8 +11,9 @@ public class Prefs {
     private static final String KEY_END_TIME = "timer_end_time";
     private static final String KEY_ACTIVE = "timer_active";
     private static final String KEY_DURATION = "timer_duration_min";
+    private static final String KEY_BLOCKED = "blocked_packages";
 
-    public static final Set<String> BLOCKED_PACKAGES = new HashSet<>(Arrays.asList(
+    public static final Set<String> DEFAULT_BLOCKED_PACKAGES = new HashSet<>(Arrays.asList(
         "com.whatsapp",
         "com.whatsapp.w4b",
         "com.facebook.katana",
@@ -41,5 +42,16 @@ public class Prefs {
     public static int getDurationMin(Context c) { return sp(c).getInt(KEY_DURATION, 25); }
     public static void setDurationMin(Context c, int v) { sp(c).edit().putInt(KEY_DURATION, v).apply(); }
 
-    public static boolean isBlocked(String pkg) { return BLOCKED_PACKAGES.contains(pkg); }
+    public static Set<String> getBlocked(Context c) {
+        Set<String> s = sp(c).getStringSet(KEY_BLOCKED, null);
+        return s != null ? s : DEFAULT_BLOCKED_PACKAGES;
+    }
+
+    public static void toggleBlocked(Context c, String pkg) {
+        Set<String> s = new HashSet<>(getBlocked(c));
+        if (!s.remove(pkg)) s.add(pkg);
+        sp(c).edit().putStringSet(KEY_BLOCKED, s).apply();
+    }
+
+    public static boolean isBlocked(Context c, String pkg) { return getBlocked(c).contains(pkg); }
 }

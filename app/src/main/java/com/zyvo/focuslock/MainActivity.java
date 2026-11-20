@@ -35,6 +35,9 @@ public class MainActivity extends Activity {
 
         startBtn.setOnClickListener(v -> startTimer());
 
+        findViewById(R.id.pickerBtn).setOnClickListener(v ->
+            startActivity(new Intent(this, AppPickerActivity.class)));
+
         requestBatteryOptimization();
 
         refresh = new Runnable() {

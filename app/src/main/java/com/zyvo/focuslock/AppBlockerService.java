@@ -23,7 +23,7 @@ public class AppBlockerService extends AccessibilityService {
         if (pkgCs == null) return;
         String pkg = pkgCs.toString();
         if (pkg.equals(getPackageName())) return; // don't block ourselves
-        if (!Prefs.isBlocked(pkg)) return;
+        if (!Prefs.isBlocked(this, pkg)) return;
 
         // Debounce: don't re-launch if we just blocked this app
         long now = System.currentTimeMillis();

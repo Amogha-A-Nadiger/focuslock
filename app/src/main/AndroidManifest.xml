@@ -18,6 +18,8 @@
     </activity>
     <activity android:name=".BlockedAppsActivity" android:exported="false"
       android:screenOrientation="portrait" />
+    <activity android:name=".AppPickerActivity" android:exported="false"
+      android:screenOrientation="portrait" />
     <service android:name=".TimerService" android:exported="false"
       android:foregroundServiceType="specialUse" />
     <service android:name=".AppBlockerService" android:exported="true"

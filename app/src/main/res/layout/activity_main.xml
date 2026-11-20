@@ -47,6 +47,15 @@
         android:backgroundTint="#4F46E5"
         android:textColor="#FFFFFF" />
 
+    <Button
+      android:id="@+id/pickerBtn"
+      android:layout_width="match_parent"
+      android:layout_height="56dp"
+      android:text="Block list"
+      android:layout_marginTop="16dp"
+      android:backgroundTint="#6B7280"
+      android:textColor="#FFFFFF" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
