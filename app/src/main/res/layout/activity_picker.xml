@@ -3,8 +3,9 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:orientation="vertical"
-  android:background="#F6F7F9"
-  android:padding="16dp">
+  android:background="@color/bg"
+  android:animateLayoutChanges="true"
+  android:padding="20dp">
 
   <TextView
     android:layout_width="match_parent"
@@ -12,12 +13,16 @@
     android:text="Apps to block during focus"
     android:textSize="16sp"
     android:textStyle="bold"
-    android:textColor="#1A1A1A" />
+    android:textColor="@color/text_primary" />
 
   <ListView
     android:id="@+id/appList"
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:layout_weight="1"
-    android:layout_marginTop="8dp" />
+    android:layout_marginTop="8dp"
+    android:divider="@color/line"
+    android:dividerHeight="1dp"
+    android:background="@drawable/input_rounded"
+    android:padding="12dp" />
 </LinearLayout>

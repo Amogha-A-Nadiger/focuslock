@@ -3,8 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F6F7F9"
-    android:padding="16dp">
+    android:background="@color/bg"
+    android:animateLayoutChanges="true"
+    android:padding="20dp">
 
     <TextView
         android:id="@+id/statusText"
@@ -13,7 +14,7 @@
         android:text="Set duration and start focus"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:textColor="#1A1A1A"
+        android:textColor="@color/text_primary"
         android:gravity="center"
         android:layout_marginTop="24dp" />
 
@@ -22,9 +23,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="--:--"
-        android:textSize="48sp"
+        android:textSize="52sp"
         android:textStyle="bold"
-        android:textColor="#4F46E5"
+        android:textColor="@color/text_primary"
         android:gravity="center"
         android:layout_marginTop="32dp" />
 
@@ -33,35 +34,42 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:hint="Duration in minutes (1-720)"
+        android:textColorHint="@color/text_disabled"
         android:inputType="number"
+        android:textColor="@color/text_primary"
         android:gravity="center"
         android:layout_marginTop="32dp"
-        android:background="@android:drawable/edit_text" />
+        android:background="@drawable/input_rounded"
+        android:paddingHorizontal="16dp" />
 
     <Button
         android:id="@+id/startBtn"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:text="Start Focus"
+        android:textSize="16sp"
         android:layout_marginTop="24dp"
-        android:backgroundTint="#4F46E5"
-        android:textColor="#FFFFFF" />
+        android:background="@drawable/btn_primary"
+        android:backgroundTint="@null"
+        android:textColor="@color/on_accent" />
 
     <Button
-      android:id="@+id/pickerBtn"
-      android:layout_width="match_parent"
-      android:layout_height="56dp"
-      android:text="Block list"
-      android:layout_marginTop="16dp"
-      android:backgroundTint="#6B7280"
-      android:textColor="#FFFFFF" />
+        android:id="@+id/pickerBtn"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Block list"
+        android:textSize="16sp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/btn_secondary"
+        android:backgroundTint="@null"
+        android:textColor="@color/text_primary" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Once started, the timer cannot be stopped until it completes. Blocked apps will be inaccessible."
         android:textSize="13sp"
-        android:textColor="#8A8A8E"
+        android:textColor="@color/text_secondary"
         android:gravity="center"
         android:layout_marginTop="16dp" />
 </LinearLayout>
