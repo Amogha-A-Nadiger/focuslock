@@ -19,7 +19,7 @@ public class AppPickerActivity extends Activity {
         setContentView(R.layout.activity_picker);
 
         PackageManager pm = getPackageManager();
-        Intent main = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHABLE);
+        Intent main = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER);
         List<ApplicationInfo> apps = pm.getInstalledApplications(0);
         List<String> labels = new ArrayList<>();
         List<String> packages = new ArrayList<>();
